@@ -4,3 +4,5 @@ server/db/
 # ignore mac finder files
 .DS_Store
 
+# ignore the node_modules folder
+app/node_modules/
