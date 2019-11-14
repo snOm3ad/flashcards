@@ -85,8 +85,6 @@ function Question({ question, showAnswer, setShowAnswer, setScore, meta }) {
     };
   }, [setScore]);
 
-  //TODO: the small-container display flex, and arrange
-  //      inner divs to be row-wise.
   return (
     <div className="container top-question">
       <div className="small-container">
@@ -231,41 +229,38 @@ function FlashCard({ question, answer, meta }) {
 
 function StudySession({ url }) {
   const [flashCards, setFlashCards] = useState([
-    {
+    { 
       question: {
-        content: "What is management ?",
-        score: 33.3,
-        timeLimit: 30,
-        index: 1
+          index: 1,
+          content: "Example question?",
+          score: 100,
+          timeLimit: 30.0,
       },
-      answer:
-        "## Answer\nManagement is the practice of deceiving people into thinking you're better than them."
-    },
-    {
-      question: {
-        content: "Name three important aspects of management ?",
-        score: 33.3,
-        timeLimit: 30,
-        index: 2
-      },
-      answer: "## Answer\n- Example 1\n - Example 2\n - Example 3"
-    },
-    {
-      question: {
-        content: "In what year was management discovered ?",
-        score: 33.3,
-        timeLimit: 30,
-        index: 3
-      },
-      answer: "## Answer\nManagement was discovered in the early 1800's."
+      answer: "## Answer\nThis is a demo answer.",
     }
   ]);
+
 
   // NOTE: here we need to fetch the list of questions from the database.
   //       So we have to write a `useEffect` call which gets updated when-
   //       ever the `url` that gets passed into the study session changes.
 
   // NOTE: Inside the fetch statement we will use `setFlashCards`.
+  useEffect(() => {
+      const fetchFlashCards = async (path) => {
+          console.log(`calling fetch with: ${path}`);
+          let response = await fetch(path);
+
+          if (response.ok) {
+              let flashcards = await response.json();
+              setFlashCards(flashcards);
+          } else {
+              console.log(`fetch failed`);
+          }
+      };
+      fetchFlashCards(url);
+  }, [url]);
+
 
   const [flashCardIndex, setFlashCardIndex] = useState(0);
   const [answeredFlashCards, setAnsweredFlashCards] = useState([]);
@@ -314,8 +309,6 @@ function StudySession({ url }) {
     setVisited: setMarkedAnswered
   };
 
-  //TODO: we need to add a question index here. What this
-  //      will do is to enable the user to switch the question
   return (
     <FlashCard
       question={flashCards[flashCardIndex].question}
@@ -326,7 +319,8 @@ function StudySession({ url }) {
 }
 
 function Main() {
-  return <StudySession url="/courses/indu/330" />;
+    //"http://localhost:8080/courses/indu/412/" 
+    return <StudySession url="/courses/indu/412"/>;
 }
 
 ReactDOM.render(<Main />, document.getElementById("app"));
