@@ -1,0 +1,181 @@
+#root {
+  display: flex;
+  flex-direction: row;
+}
+
+#bottom-level {
+  margin-top: 10px;
+}
+
+#top-level {
+  background-color: #234c63;
+  border-radius: 10px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.container.top-answer {
+  height: 450px;
+  justify-content: space-between;
+}
+
+.container.top-question {
+  height: 450px;
+  justify-content: space-between;
+}
+
+.container.bottom-level {
+  height: 300px;
+  justify-content: space-between;
+}
+
+.container.top-answer #answer-content {
+  font-family: "Roboto", sans-serif;
+  font-size: 16px;
+  color: white;
+  margin: 10px 40px;
+}
+
+.container.top-question #question-content {
+  font-family: "Roboto", sans-serif;
+  font-size: 32px;
+  color: white;
+  margin: 10px 40px;
+  height: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container.top-answer .controls-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.controls-container .controls-flex-container {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+}
+
+.container.bottom-level {
+  margin: auto 30px;
+}
+
+.container.bottom-level .controls-container {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+button.controls {
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  width: 135px;
+  height: 45px;
+  border-radius: 10px;
+  font-family: "Roboto";
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.feedback {
+  border: none;
+  background-color: white;
+  color: #234c63;
+}
+
+.feedback:hover {
+  background-color: #e7e7e7;
+}
+
+.skip {
+  border: none;
+  background-color: #234c63;
+  color: white;
+}
+
+.skip:hover {
+  background-color: #1c3c4f;
+}
+
+.pill-wrapper {
+  margin: 10px 6px 10px;
+  overflow: hidden;
+}
+
+.pill-wrapper > p {
+  font-family: "Roboto", sans-serif;
+  font-size: 32px;
+  font-style: bold;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.pill-track {
+  background: #c4c4c4;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pill-track > div {
+  height: 30px;
+}
+
+.score-container {
+  margin-top: 15px;
+  width: 60%;
+  align-self: center;
+}
+
+.small-container {
+  display: flex;
+  height: 10%;
+}
+
+.small-container .index {
+  width: 50%;
+  display: flex;
+  align-items: center;
+}
+
+.index > div {
+  padding-left: 20px;
+  font-family: "Roboto", sans-serif;
+  font-size: 18px;
+  color: white;
+}
+
+.small-container .timer {
+  width: 50%;
+  /* border: solid black 1px; */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.timer > div {
+  width: 25px;
+  padding-right: 30px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  height: 20%;
+}
+
+.controls-container .prev-control-container {
+  width: 50%;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.controls-container .skip-control-container {
+  width: 50%;
+  display: flex;
+  justify-content: flex-end;
+}
