@@ -2,9 +2,10 @@ package main
 
 import (
     "log"
+    "time"
     "math/rand"
-    _ "rsc.io/sqlite"
     "database/sql"
+    _ "rsc.io/sqlite"
     "net/http"
     "github.com/gin-gonic/gin"
 )
@@ -13,28 +14,15 @@ type (
     FlashCardQuestion struct {
         Index int32 `json:"index"`
         Content string `json:"content"`
-        Time int32 `json:"timeLimit"`
         Score float64 `json:"score"`
+        Time int32 `json:"timeLimit"`
     }
 
     FlashCard struct {
-        Answer string `json:"answer"`
         Question FlashCardQuestion `json:"question"`
+        Answer string `json:"answer"`
     }
 )
-
-/*
-    // Now we will append things to the list
-    flashCards = append(flashCards, FlashCard {
-        Answer: "## Answer\nThis is an example answer, answers in *Flashcards* allow for `markdown`-syntax which allows you to write expressive answers.\n- Example 1\n- Example 2",
-        Question: FlashCardQuestion {
-            Index: 1,
-            Content: "This is an example question?",
-            Time: 30.0,
-            Score: 100,
-        },
-    });
-*/
 
 func AccumulateScore(cards []FlashCard) float64 {
     totalScore := 0.0
@@ -45,7 +33,6 @@ func AccumulateScore(cards []FlashCard) float64 {
     return totalScore;
 }
 
-// Let's start by creating an in-memory server of the data.
 func ServeContent(db *sql.DB, courseID int32) func (*gin.Context) {
     // We will need a list of `FlashCard` items which contains 
     var flashCards []FlashCard;
@@ -62,6 +49,7 @@ func ServeContent(db *sql.DB, courseID int32) func (*gin.Context) {
     var card FlashCard
 
     for rows.Next() {
+        // get all the elements specified in the query above. 
         rows.Scan(
             &card.Question.Index,
             &card.Question.Content,
@@ -70,23 +58,34 @@ func ServeContent(db *sql.DB, courseID int32) func (*gin.Context) {
             &card.Question.Time,
         )
 
+        // append the current row to the array.
         flashCards = append(flashCards, card)
     }
 
-    // normalize the scores of each question.
+    // normalize the scores of each question so that the maximum score is 100%
     totalScore := AccumulateScore(flashCards);
     for idx := range(flashCards) {
         flashCards[idx].Question.Score /= totalScore
         flashCards[idx].Question.Score *= 100.0
     }
 
-    // shuffle the `flashCards` array.
-    for i := range(flashCards) {
-        j := rand.Intn(i + 1);
-        flashCards[i], flashCards[j] = flashCards[j], flashCards[i];
-    }
+    // NOTE: this implies that we have a different seed everytime the server is runned
+    //       not every time the user makes a request. imo, this should introduce enough
+    //       randomness into the feature.
+    rand.Seed(time.Now().UTC().UnixNano())
 
     return func (c *gin.Context) {
+        // look at for more info https://stackoverflow.com/questions/12264789/shuffle-array-in-go
+        for i := range(flashCards) {
+            j := rand.Intn(i + 1)
+            flashCards[i], flashCards[j] = flashCards[j], flashCards[i]
+        }
+
+        // re-assing the indices, note that is what not possible to do this above.
+        for i := range(flashCards) {
+            flashCards[i].Question.Index = int32(i + 1);
+        }
+
         c.JSON(http.StatusOK, flashCards);
     }
 }
