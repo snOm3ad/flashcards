@@ -2,6 +2,7 @@ package main
 
 import (
     "log"
+    "math/rand"
     _ "rsc.io/sqlite"
     "database/sql"
     "net/http"
@@ -72,10 +73,17 @@ func ServeContent(db *sql.DB, courseID int32) func (*gin.Context) {
         flashCards = append(flashCards, card)
     }
 
+    // normalize the scores of each question.
     totalScore := AccumulateScore(flashCards);
     for idx := range(flashCards) {
         flashCards[idx].Question.Score /= totalScore
         flashCards[idx].Question.Score *= 100.0
+    }
+
+    // shuffle the `flashCards` array.
+    for i := range(flashCards) {
+        j := rand.Intn(i + 1);
+        flashCards[i], flashCards[j] = flashCards[j], flashCards[i];
     }
 
     return func (c *gin.Context) {
