@@ -249,15 +249,14 @@ function StudySession({ url }) {
     // NOTE: Inside the fetch statement we will use `setFlashCards`.
     useEffect(() => {
         const fetchFlashCards = async path => {
-            console.log(`calling fetch with: ${path}`);
-
+            // get the response from the server and update the value of the `flashCards` property.
             let response = await fetch(path);
-
             if (response.ok) {
                 let flashcards = await response.json();
                 setFlashCards(flashcards);
             } else {
-                console.log("server did not liked the request.");
+                // TODO: handle this better.
+                console.error("server did not liked the request.");
             }
         };
         fetchFlashCards(url);
@@ -325,4 +324,4 @@ function Main() {
     return <StudySession url="/courses/indu/412" />;
 }
 
-ReactDOM.render(<Main />, document.getElementById("app"));         
+ReactDOM.render(<Main />, document.getElementById("app"));

@@ -6,3 +6,6 @@ server/database/
 
 # ignore the node_modules folder
 app/node_modules/
+
+# ignore react production build
+app/build/
