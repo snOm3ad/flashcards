@@ -1,5 +1,5 @@
 # Exclude the database folder.
-server/db/
+server/database/
 
 # ignore mac finder files
 .DS_Store
