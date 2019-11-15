@@ -1,7 +1,9 @@
 package main
 
 import (
-    _ "database/sql"
+    "log"
+    _ "rsc.io/sqlite"
+    "database/sql"
     "net/http"
     "github.com/gin-gonic/gin"
 )
@@ -10,8 +12,8 @@ type (
     FlashCardQuestion struct {
         Index int32 `json:"index"`
         Content string `json:"content"`
-        Time float64 `json:"timeLimit"`
-        Score int32 `json:"score"`
+        Time int32 `json:"timeLimit"`
+        Score float64 `json:"score"`
     }
 
     FlashCard struct {
@@ -20,13 +22,7 @@ type (
     }
 )
 
-
-// Let's start by creating an in-memory server of the data.
-func ServeContent(courseID int32) func (*gin.Context) {
-    // We will need a list of `FlashCard` items which contains 
-    var flashCards []FlashCard;
-
-
+/*
     // Now we will append things to the list
     flashCards = append(flashCards, FlashCard {
         Answer: "## Answer\nThis is an example answer, answers in *Flashcards* allow for `markdown`-syntax which allows you to write expressive answers.\n- Example 1\n- Example 2",
@@ -37,20 +33,77 @@ func ServeContent(courseID int32) func (*gin.Context) {
             Score: 100,
         },
     });
+*/
+
+func AccumulateScore(cards []FlashCard) float64 {
+    totalScore := 0.0
+    for _, card := range(cards) {
+        totalScore += card.Question.Score
+    }
+
+    return totalScore;
+}
+
+// Let's start by creating an in-memory server of the data.
+func ServeContent(db *sql.DB, courseID int32) func (*gin.Context) {
+    // We will need a list of `FlashCard` items which contains 
+    var flashCards []FlashCard;
+
+    // Prepare a statement to fetch all the rows from the `flashcards` table.
+    rows, err := db.Query(`
+    SELECT id, question, answer, score, time FROM flashcards WHERE course_id = ?;
+    `, courseID);
+
+    if err != nil {
+        log.Fatalf("failed to retrieve values from the database: %s", err.Error())
+    }
+
+    var card FlashCard
+
+    for rows.Next() {
+        rows.Scan(
+            &card.Question.Index,
+            &card.Question.Content,
+            &card.Answer,
+            &card.Question.Score,
+            &card.Question.Time,
+        )
+
+        flashCards = append(flashCards, card)
+    }
+
+    totalScore := AccumulateScore(flashCards);
+    for idx := range(flashCards) {
+        flashCards[idx].Question.Score /= totalScore
+        flashCards[idx].Question.Score *= 100.0
+    }
 
     return func (c *gin.Context) {
         c.JSON(http.StatusOK, flashCards);
     }
 }
 
-func Init() {
+func Init() *sql.DB {
+    var db, err = sql.Open("sqlite3", "./database/flashcards.db")
+    if err != nil {
+        log.Fatalf("can't open database: %s", err.Error())
+    }
+    return db
 }
 
 func main() {
+    // open the database from which we will get the flashcards from.
+    // for now, since we are not handling `POST` request all of our data is already inside the database.
+    // furthermore, since there are no users we don't need to worry about validation.
+    conn := Init()
+    // this makes sure the database is closed once the server stops running.
+    defer conn.Close()
+    // start the webserver and add `CORS` middleware to ensure the application works as intended.
     router := gin.Default()
-    router.Use(CORSMiddleware());
-    // Here we would write something like.
-    router.GET("/courses/indu/412", ServeContent(412))
+    // TODO: research how properly implement this...
+    router.Use(CORSMiddleware())
+    // here we route based requested courseID
+    router.GET("/courses/indu/412", ServeContent(conn, 412))
     router.Run(":8080")
 }
 
