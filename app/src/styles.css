@@ -18,17 +18,17 @@
 }
 
 .container.top-answer {
-  height: 450px;
+  height: 500px;
   justify-content: space-between;
 }
 
 .container.top-question {
-  height: 450px;
+  height: 500px;
   justify-content: space-between;
 }
 
 .container.bottom-level {
-  height: 300px;
+  height: 250px;
   justify-content: space-between;
 }
 
@@ -45,6 +45,8 @@
   color: white;
   margin: 10px 40px;
   height: 50%;
+
+  text-align: center;
 
   display: flex;
   justify-content: center;
