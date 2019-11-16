@@ -3,14 +3,14 @@ import { useSpring, animated } from "react-spring";
 
 function DrawScoreBar({ value, color }) {
   const [props] = useSpring({
-    width: `${value.toFixed(0)}%`,
+    width: `${value.toFixed(1)}%`,
     from: { width: "0%" },
     background: color
   });
 
   return (
     <div className="pill-wrapper">
-      <p> {value.toFixed(0)}% </p>
+      <p> {value.toFixed(1)}% </p>
       <div className="pill-track">
         <animated.div style={props} />
       </div>
