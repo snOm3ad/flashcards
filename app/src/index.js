@@ -7,7 +7,15 @@ import ReactMarkdown from "react-markdown";
 import ScoreBar from "./components/ScoreBar";
 import CircularTimer from "./components/CircularTimer";
 
-function Answer({ content, setShowAnswer, meta }) {
+const RenderMarkdown = React.memo(({ source }) => {
+    return <ReactMarkdown source={source}/>;
+}, (prevProps, currProps) => {
+    // We know that the content of the answer is not going to change
+    // so we can skip the comparison and just return false.
+    return true;
+});
+
+function Answer({ content, meta }) {
     const [clicked, setClicked] = useState(false);
     // Update the `answeredRight` property depending on which button
     // was pressed by the user, and, set the `visited` property to
@@ -29,7 +37,7 @@ function Answer({ content, setShowAnswer, meta }) {
     return (
         <div className="container top-answer">
             <div id="answer-content">
-                <ReactMarkdown source={content} />{" "}
+                <RenderMarkdown source={content} />{" "}
             </div>{" "}
             {!meta.visited && !clicked && (
                 <div className="controls-container">
@@ -65,13 +73,17 @@ function Question({ question, showAnswer, setShowAnswer, setScore, meta }) {
 
     // NOTE: this will run every second.
     useEffect(() => {
-        lastestTime.current = time;
-    }, [time, meta.index]);
+        if (!meta.visited) {
+            lastestTime.current = time;
+        }
+    }, [time, meta.visited]);
 
     // NOTE: two questions may have the same timeLimit in a row `timeLimit`
     useEffect(() => {
-        totalTime.current = timeLimit;
-    }, [timeLimit, meta.index]);
+        if (!meta.visited) {
+            totalTime.current = timeLimit;
+        }
+    }, [timeLimit, meta.visited]);
 
     useEffect(() => {
         return () => {
@@ -114,11 +126,12 @@ function Question({ question, showAnswer, setShowAnswer, setScore, meta }) {
     );
 }
 
+
 function TopLevelContents({ question, answer, setScore, meta }) {
     const [showAnswer, setShowAnswer] = useState(false);
 
     const FlashCardAnswer = (
-        <Answer setShowAnswer={setShowAnswer} content={answer} meta={meta} />
+        <Answer content={answer} meta={meta} />
     );
 
     // NOTE: flash card question needs show answer because it will tell the timer
@@ -133,18 +146,11 @@ function TopLevelContents({ question, answer, setScore, meta }) {
         />
     );
 
-    // NOTE: manually handling synchronization of the `showAnswer` component
-    const [currentRender, setCurrentRender] = useState(FlashCardQuestion);
-
     useEffect(() => {
         setShowAnswer(false);
     }, [meta.index]);
 
-    useEffect(() => {
-        setCurrentRender(showAnswer ? FlashCardAnswer : FlashCardQuestion);
-    }, [showAnswer, FlashCardAnswer, FlashCardQuestion]);
-
-    return currentRender;
+    return showAnswer ? FlashCardAnswer : FlashCardQuestion;
 }
 
 function ButtomLevelContents({ score, meta }) {
@@ -320,7 +326,7 @@ function StudySession({ url }) {
 }
 
 function Main() {
-    //"http://localhost:8080/courses/indu/412/"
+    //return <StudySession url="http://localhost:8080/courses/indu/412" />;
     return <StudySession url="/courses/indu/412" />;
 }
 
