@@ -36,11 +36,14 @@ function Answer({ content, meta }) {
 
     return (
         <div className="container top-answer">
+            <div className="page-title">
+                <h2>Answer</h2>
+            </div>
             <div id="answer-content">
                 <RenderMarkdown source={content} />{" "}
             </div>{" "}
-            {!meta.visited && !clicked && (
-                <div className="controls-container">
+            <div className="controls-container">
+                {!meta.visited && !clicked && (
                     <div className="controls-flex-container">
                         <div>
                             <button
@@ -58,9 +61,9 @@ function Answer({ content, meta }) {
                                 <Emoji symbol="👍" label="thumbs-down-sign" />
                             </button>{" "}
                         </div>{" "}
-                    </div>{" "}
-                </div>
-            )}{" "}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
@@ -326,8 +329,8 @@ function StudySession({ url }) {
 }
 
 function Main() {
-    //return <StudySession url="http://localhost:8080/courses/indu/412" />;
-    return <StudySession url="/courses/indu/412" />;
+    return <StudySession url="http://localhost:8080/courses/indu/412" />;
+    //return <StudySession url="/courses/indu/412" />;
 }
 
 ReactDOM.render(<Main />, document.getElementById("app"));
