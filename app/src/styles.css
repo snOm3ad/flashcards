@@ -18,25 +18,37 @@
 }
 
 .container.top-answer {
-  height: 500px;
+  height: 475px;
   justify-content: space-between;
 }
 
 .container.top-question {
-  height: 500px;
+  height: 475px;
+  overflow: auto;
   justify-content: space-between;
 }
 
 .container.bottom-level {
-  height: 250px;
+  height: 275px;
   justify-content: space-between;
 }
 
+.container.top-answer .page-title {
+  font-family: "Roboto", sans-serif;
+  color: white;
+  font-weight: bold;
+  margin: 0px 40px;
+  height: 10%;
+}
+
 .container.top-answer #answer-content {
+  overflow: auto;
+  scrollbar-color: #1c3c4f #234c63;
   font-family: "Roboto", sans-serif;
   font-size: 16px;
   color: white;
   margin: 10px 40px;
+  height: 75%;
 }
 
 .container.top-question #question-content {
@@ -57,6 +69,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 40px;
+  height: 10%;
 }
 
 .controls-container .controls-flex-container {
@@ -167,7 +180,8 @@ button.controls {
 .button-container {
   display: flex;
   justify-content: center;
-  height: 20%;
+  height: 10%;
+  margin-bottom: 40px;
 }
 
 .controls-container .prev-control-container {
